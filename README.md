@@ -18,6 +18,3 @@ The Shell library and examples should be found in the Arduino IDE
 File>Sketchbook menu. Open the CosaShell example sketch. Select
 the Cosa core by selecting one of the Cosa boards in the Tools>Board
 menu.
-
-
-
