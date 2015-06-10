@@ -70,7 +70,7 @@ int
 Shell::execute(char* buf)
 {
   // Scan the line for command, options and parameters
-  if (buf == NULL) return (0);
+  if (UNLIKELY(buf == NULL)) return (0);
   char* argv[ARGV_MAX];
   int argc = 0;
   char* bp = buf;
@@ -108,11 +108,11 @@ Shell::execute(char* buf)
   // End the argument list and check for empty commmand line
   argv[argc] = NULL;
   m_argc = argc;
-  if (argc == 0) return (0);
+  if (UNLIKELY(argc == 0)) return (0);
 
   // Lookup shell command and call action function or script
   const command_t* cp = lookup(argv[0]);
-  if (cp == NULL) return (UNKNOWN_COMMAND);
+  if (UNLIKELY(cp == NULL)) return (UNKNOWN_COMMAND);
   if (m_level < (Level) pgm_read_byte(&cp->level)) return (PERMISSION_DENIED);
   m_optind = 1;
   m_optend = false;
