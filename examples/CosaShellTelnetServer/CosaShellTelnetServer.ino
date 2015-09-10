@@ -42,6 +42,7 @@
 #include <Telnet.h>
 #include <W5100.h>
 
+#include "Cosa/Clock.hh"
 #include "Cosa/RTC.hh"
 #include "Cosa/Power.hh"
 #include "Cosa/Watchdog.hh"
@@ -87,11 +88,14 @@ TelnetShell server(shell, ios);
 static const uint8_t mac[6] __PROGMEM = { 0xde, 0xad, 0xbe, 0xef, 0xfe, 0xed };
 W5100 ethernet(mac);
 
+// Wall-clock
+Clock clock;
+
 void setup()
 {
   // Initiate timers
   Watchdog::begin();
-  RTC::begin();
+  RTC::begin(&clock);
 
   // Set up idle time capture
   yield = iowait;

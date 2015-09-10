@@ -44,6 +44,7 @@
 #include <W5100.h>
 
 #include "Cosa/RTC.hh"
+#include "Cosa/Clock.hh"
 #include "Cosa/Power.hh"
 #include "Cosa/Watchdog.hh"
 #include "Cosa/Trace.hh"
@@ -110,13 +111,16 @@ Socket* sock = NULL;
 OutputPin sd(Board::D4, 1);
 #endif
 
+// Wall-time clock
+Clock clock;
+
 void setup()
 {
   // Initiate uart and trace output stream. And timers; watchdog and rtc
   uart.begin(9600);
   trace.begin(&uart, PSTR("CosaShellWebServer: started"));
   Watchdog::begin();
-  RTC::begin();
+  RTC::begin(&clock);
 
   // Set up idle time capture function
   yield = iowait;

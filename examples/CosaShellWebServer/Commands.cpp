@@ -156,11 +156,11 @@ SHELL_ACTION(date, "[YEAR-MON-DAY HOUR:MIN:SEC]", "display or set the system dat
       return (Shell::ILLEGAL_COMMAND);
     now.seconds = value;
     epoch = now;
-    RTC::time(epoch);
+    clock.time(epoch);
   }
   else if (argc != 1)
     return (Shell::ILLEGAL_COMMAND);
-  time_t now(RTC::seconds());
+  time_t now(clock.time());
   ios << now << endl;
   return (0);
 }
@@ -603,7 +603,7 @@ SHELL_ACTION(uptime, "", "seconds since latest date set or system start")
   UNUSED(argv);
   if (argc != 1)
     return (Shell::ILLEGAL_COMMAND);
-  ios << RTC::seconds() - epoch << endl;
+  ios << clock.time() - epoch << endl;
   return (0);
 }
 

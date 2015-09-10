@@ -24,9 +24,11 @@
 #ifndef TELNET_COMMANDS_H
 #define TELNET_COMMANDS_H
 
+#include "Cosa/Clock.hh"
 #include "Cosa/IOStream.hh"
 
 extern Shell shell;
+extern Clock clock;
 extern IOStream ios;
 extern void iowait();
 #endif

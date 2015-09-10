@@ -24,10 +24,12 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
+#include "Cosa/Clock.hh"
 #include "Cosa/IOStream.hh"
 
 extern Shell shell;
 extern IOStream ios;
+extern Clock clock;
 extern void iowait();
 #endif
 

@@ -26,17 +26,20 @@
 #include <OWI.h>
 
 #include "Commands.h"
+#include "Cosa/Clock.hh"
 #include "Cosa/RTC.hh"
 #include "Cosa/Tone.hh"
 #include "Cosa/Power.hh"
 #include "Cosa/Watchdog.hh"
 #include "Cosa/IOStream/Driver/UART.hh"
 
+Clock clock;
+
 void setup()
 {
   Watchdog::begin();
   Tone::begin();
-  RTC::begin();
+  RTC::begin(&clock);
   uart.begin(57600);
   yield = iowait;
 }
