@@ -24,11 +24,11 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-#include "Cosa/Clock.hh"
+#include "Cosa/RTC.hh"
 #include "Cosa/IOStream.hh"
 
 extern Shell shell;
-extern Clock clock;
+extern RTC::Clock clock;
 extern IOStream ios;
 extern void iowait();
 #endif
