@@ -217,7 +217,7 @@ public:
   int help(IOStream& outs, char* command = NULL);
 
   /**
-   * @override Shell
+   * @override{Shell}
    * Print prompt to given output stream. Default implementation will
    * print instance prompt string (in program memory).
    * @param[in] outs output stream.
