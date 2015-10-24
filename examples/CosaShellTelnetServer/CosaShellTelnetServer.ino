@@ -42,7 +42,7 @@
 #include <Telnet.h>
 #include <W5100.h>
 
-#include "Cosa/RTC.hh"
+#include "Cosa/RTT.hh"
 #include "TelnetCommands.h"
 
 // Disable SD on Ethernet Shield
@@ -110,12 +110,12 @@ W5100 ethernet(mac);
 Socket* sock = NULL;
 
 // Wall-clock
-RTC::Clock clock;
+RTT::Clock clock;
 
 void setup()
 {
   // Initiate timer
-  RTC::begin();
+  RTT::begin();
 
   // Set up idle time capture
   yield = iowait;

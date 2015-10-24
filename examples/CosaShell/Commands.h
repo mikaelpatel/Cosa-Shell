@@ -24,12 +24,12 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-#include "Cosa/RTC.hh"
+#include "Cosa/RTT.hh"
 #include "Cosa/IOStream.hh"
 
 extern Shell shell;
 extern IOStream ios;
-extern RTC::Clock clock;
+extern RTT::Clock clock;
 extern void iowait();
 #endif
 

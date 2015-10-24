@@ -23,7 +23,7 @@
 
 #include "Commands.h"
 
-#include "Cosa/RTC.hh"
+#include "Cosa/RTT.hh"
 #include "Cosa/Time.hh"
 #include "Cosa/Tone.hh"
 #include "Cosa/Memory.h"
@@ -41,9 +41,9 @@ static uint32_t idle = 0L;
 
 void iowait()
 {
-  uint32_t start = RTC::micros();
+  uint32_t start = RTT::micros();
   Power::sleep();
-  uint32_t stop = RTC::micros();
+  uint32_t stop = RTT::micros();
   idle = (start > stop) ? 0L : idle + (stop - start);
 }
 
@@ -360,7 +360,7 @@ SHELL_ACTION(idle, "", "display idle time")
   UNUSED(argv);
   if (argc != 1)
     return (Shell::ILLEGAL_COMMAND);
-  ios << (idle * 100.0) / RTC::micros() << '%' << endl;
+  ios << (idle * 100.0) / RTT::micros() << '%' << endl;
   return (0);
 }
 
@@ -394,7 +394,7 @@ SHELL_ACTION(micros, "", "clock in micro-seconds")
   UNUSED(argv);
   if (argc != 1)
     return (Shell::ILLEGAL_COMMAND);
-  ios << RTC::micros() << endl;
+  ios << RTT::micros() << endl;
   return (0);
 }
 
@@ -404,7 +404,7 @@ SHELL_ACTION(millis, "", "clock in milli-seconds")
   UNUSED(argv);
   if (argc != 1)
     return (Shell::ILLEGAL_COMMAND);
-  ios << RTC::millis() << endl;
+  ios << RTT::millis() << endl;
   return (0);
 }
 
@@ -505,7 +505,7 @@ SHELL_ACTION(repeat, "[-t] COUNT [DELAY] COMMAND", "repeat command line")
   const size_t BUF_MAX = 64;
   char buf[BUF_MAX];
   uint8_t fx = ix;
-  uint32_t start = RTC::millis();
+  uint32_t start = RTT::millis();
   do {
     buf[0] = 0;
     strcat(buf, argv[fx]);
@@ -518,7 +518,7 @@ SHELL_ACTION(repeat, "[-t] COUNT [DELAY] COMMAND", "repeat command line")
       return (Shell::ILLEGAL_COMMAND);
     if (ms != 0) delay(ms);
   } while (--count);
-  uint32_t stop = RTC::millis();
+  uint32_t stop = RTT::millis();
   if (timing) ios << stop - start << PSTR(" ms") << endl;
   return (ios.device()->flush());
 }
