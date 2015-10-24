@@ -52,6 +52,7 @@ static uint32_t epoch = 0L;
 SHELL_ACTION(analogread, "all|ALL|vcc|PIN..", "read analog pin(s)")
 (int argc, char* argv[])
 {
+  AnalogPin::powerup();
   if (argc == 2 && (strcmp_P(argv[1], PSTR("all")) == 0 ||
 		    strcmp_P(argv[1], PSTR("ALL")) == 0)) {
     char prefix = argv[1][0];
@@ -82,6 +83,7 @@ SHELL_ACTION(analogread, "all|ALL|vcc|PIN..", "read analog pin(s)")
       ios << AnalogPin::sample(pin[i]) << endl;
     }
   }
+  AnalogPin::powerdown();
   return (0);
 }
 
@@ -417,11 +419,11 @@ SHELL_ACTION(owi, "scan PIN", "scan 1-wire bus")
 
 static void write_pinmode(Board::DigitalPin pin)
 {
-  if (IOPin::get_mode(pin) == IOPin::OUTPUT_MODE)
+  if (IOPin::mode(pin) == IOPin::OUTPUT_MODE)
     ios << PSTR("output") << endl;
   else {
     ios << PSTR("input");
-    if (InputPin::get_mode(pin) == InputPin::PULLUP_MODE)
+    if (InputPin::mode(pin) == InputPin::PULLUP_MODE)
       ios << PSTR(", pullup");
     ios << endl;
   }
@@ -460,11 +462,11 @@ SHELL_ACTION(pinmode, "all|ALL|led|PIN [input|output|pullup]",
     if (!shell.is_privileged(Shell::USER))
       return (Shell::PERMISSION_DENIED);
     if (strcmp_P(argv[2], PSTR("input")) == 0)
-      IOPin::set_mode(pin, IOPin::INPUT_MODE);
+      IOPin::mode(pin, IOPin::INPUT_MODE);
     else if (strcmp_P(argv[2], PSTR("output")) == 0)
-      IOPin::set_mode(pin, IOPin::OUTPUT_MODE);
+      IOPin::mode(pin, IOPin::OUTPUT_MODE);
     else if (strcmp_P(argv[2], PSTR("pullup")) == 0)
-      InputPin::set_mode(pin, InputPin::PULLUP_MODE);
+      InputPin::mode(pin, InputPin::PULLUP_MODE);
     else
       return (Shell::ILLEGAL_COMMAND);
   }
@@ -505,10 +507,11 @@ SHELL_ACTION(repeat, "[-t] COUNT [DELAY] COMMAND", "repeat command line")
     if (shell.execute(buf) != 0)
       return (Shell::ILLEGAL_COMMAND);
     if (ms != 0) delay(ms);
+    ios.device()->flush();
   } while (--count);
   uint32_t stop = RTC::millis();
   if (timing) ios << stop - start << PSTR(" ms") << endl;
-  return (ios.get_device()->flush());
+  return (ios.device()->flush());
 }
 
 SHELL_ACTION(stty, "[eol=CR|LF|CRLF]", "display or set tty mode")
@@ -518,7 +521,7 @@ SHELL_ACTION(stty, "[eol=CR|LF|CRLF]", "display or set tty mode")
   char* option;
   char* value;
   int ix;
-  IOStream::Mode mode = ios.get_device()->get_eol();
+  IOStream::Mode mode = ios.device()->eol();
   while ((ix = shell.get(option, value)) == 0) {
     if (strcmp_P(option, PSTR("eol")) == 0) {
       if (strcmp_P(value, PSTR("CR")) == 0)
@@ -535,7 +538,7 @@ SHELL_ACTION(stty, "[eol=CR|LF|CRLF]", "display or set tty mode")
   }
   if (ix != argc)
     return (Shell::ILLEGAL_COMMAND);
-  ios.get_device()->set_eol(mode);
+  ios.device()->eol(mode);
   ios << PSTR("eol=");
   switch (mode) {
   case IOStream::CR_MODE: ios << PSTR("CR"); break;
@@ -585,10 +588,10 @@ SHELL_ACTION(twi, "scan", "scan I2C bus")
     return (Shell::ILLEGAL_COMMAND);
   for (uint8_t addr = 3; addr < 128; addr++) {
     TWI::Driver dev(addr);
-    twi.begin(&dev);
+    twi.acquire(&dev);
     uint8_t data;
     int count = twi.read(&data, sizeof(data));
-    twi.end();
+    twi.release();
     if (count != sizeof(data)) continue;
     ios << PSTR("TWI::device(addr = ") << hex << addr
 	<< PSTR(", group = ") << (addr >> 3) << '.' << (addr & 0x07)

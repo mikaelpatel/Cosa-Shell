@@ -199,6 +199,7 @@ Shell::run(IOStream& ios)
     else ios << PSTR("illegal command");
     ios << endl;
   }
+  ios << flush;
 
   // Prompt for the next command line
   prompt(ios);

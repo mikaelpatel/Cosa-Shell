@@ -43,23 +43,21 @@
 #include <W5100.h>
 
 #include "Cosa/RTC.hh"
-#include "Cosa/Power.hh"
-#include "Cosa/Watchdog.hh"
-
 #include "TelnetCommands.h"
-
-#ifdef DEBUG
-#include "Cosa/Trace.hh"
-#include "Cosa/IOStream/Driver/UART.hh"
-#else
-#define ASSERT(x) x
-#endif
 
 // Disable SD on Ethernet Shield
 #define USE_ETHERNET_SHIELD
 #if defined(USE_ETHERNET_SHIELD)
 #include "Cosa/OutputPin.hh"
 OutputPin sd(Board::D4, 1);
+#endif
+
+// #define TELNET_SHELL_DEBUG
+#if defined(TELNET_SHELL_DEBUG)
+#include "Cosa/Trace.hh"
+#include "Cosa/IOStream/Driver/UART.hh"
+#else
+#define ASSERT(x) (x)
 #endif
 
 // The Telnet Shell Server
@@ -75,41 +73,75 @@ public:
     m_shell.set_echo(false);
     return (true);
   }
-  virtual void on_connect(IOStream& ios) { m_shell.run(ios); }
-  virtual void on_request(IOStream& ios) { m_shell.run(ios); }
-  virtual void on_disconnect() { m_shell.reset(); }
+  virtual void on_connect(IOStream& ios)
+  {
+#if defined(TELNET_SHELL_DEBUG)
+    INET::addr_t addr;
+    client(addr);
+    trace << PSTR("MAC: ");
+    INET::print_mac(trace, addr.mac);
+    trace << PSTR(", IP: ");
+    INET::print_addr(trace, addr.ip, addr.port);
+    trace << endl;
+#endif
+    m_shell.run(ios);
+  }
+  virtual void on_request(IOStream& ios)
+  {
+    m_shell.run(ios);
+  }
+  virtual void on_disconnect()
+  {
+    m_shell.reset();
+  }
 protected:
   Shell& m_shell;
 };
 TelnetShell server(shell, ios);
 
+// Network configuration
+#define IP 192,168,1,150
+#define SUBNET 255,255,255,0
+#define GATEWAY 192,168,1,1
+
 // W5100 Ethernet Controller with MAC-address
 static const uint8_t mac[6] __PROGMEM = { 0xde, 0xad, 0xbe, 0xef, 0xfe, 0xed };
 W5100 ethernet(mac);
+Socket* sock = NULL;
 
 // Wall-clock
 RTC::Clock clock;
 
 void setup()
 {
-  // Initiate timers
-  Watchdog::begin();
+  // Initiate timer
   RTC::begin();
 
   // Set up idle time capture
   yield = iowait;
 
   // Setup trace output
-#ifdef DEBUG
+#if defined(TELNET_SHELL_DEBUG)
   uart.begin(9600);
   trace.begin(&uart, PSTR("CosaTelnetShell: started"));
 #endif
 
   // Start ethernet controller and request network address for hostname
-  ASSERT(ethernet.begin_P(PSTR("CosaTelnetShell")));
+  uint8_t ip[INET::IP_MAX] = { IP };
+  uint8_t subnet[INET::IP_MAX] = { SUBNET };
+#if defined(TELNET_SHELL_DEBUG)
+  trace << PSTR("IP: ");
+  INET::print_addr(trace, ip);
+  trace << endl;
+  trace << PSTR("SUBNET: ");
+  INET::print_addr(trace, subnet);
+  trace << endl;
+#endif
+  ASSERT(ethernet.begin(ip, subnet));
+  ASSERT((sock = ethernet.socket(Socket::TCP, Telnet::PORT)) != NULL);
 
   // Allocate a TCP socket and start server
-  ASSERT(server.begin(ethernet.socket(Socket::TCP, Telnet::PORT)));
+  ASSERT(server.begin(sock));
 }
 
 void loop()

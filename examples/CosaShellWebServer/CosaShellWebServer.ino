@@ -125,14 +125,21 @@ void setup()
   yield = iowait;
 
   // Initiate ethernet controller with address and start server
-  uint8_t ip[4] = { IP };
-  uint8_t subnet[4] = { SUBNET };
+  uint8_t ip[INET::IP_MAX] = { IP };
+  uint8_t subnet[INET::IP_MAX] = { SUBNET };
+  trace << PSTR("IP: ");
+  INET::print_addr(trace, ip);
+  trace << endl;
+  trace << PSTR("SUBNET: ");
+  INET::print_addr(trace, subnet);
+  trace << endl;
+
   ASSERT(ethernet.begin(ip, subnet));
   ASSERT((sock = ethernet.socket(Socket::TCP, PORT)) != NULL);
   ASSERT(server.begin(sock));
 
   // Bind the socket to the shell io-stream
-  ios.set_device(sock);
+  ios.device(sock);
 
   // Set shell privilege level; ADMIN
   shell.set_privilege(Shell::ADMIN);
