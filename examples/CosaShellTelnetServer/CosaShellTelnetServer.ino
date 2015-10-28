@@ -55,7 +55,7 @@ OutputPin sd(Board::D4, 1);
 // #define TELNET_SHELL_DEBUG
 #if defined(TELNET_SHELL_DEBUG)
 #include "Cosa/Trace.hh"
-#include "Cosa/IOStream/Driver/UART.hh"
+#include "Cosa/UART.hh"
 #else
 #define ASSERT(x) (x)
 #endif

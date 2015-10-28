@@ -30,7 +30,7 @@
 #include "Cosa/Tone.hh"
 #include "Cosa/Power.hh"
 #include "Cosa/Watchdog.hh"
-#include "Cosa/IOStream/Driver/UART.hh"
+#include "Cosa/UART.hh"
 
 RTT::Clock clock;
 
@@ -39,7 +39,7 @@ void setup()
   Watchdog::begin();
   Tone::begin();
   RTT::begin();
-  uart.begin(57600);
+  uart.begin(9600);
   yield = iowait;
 }
 

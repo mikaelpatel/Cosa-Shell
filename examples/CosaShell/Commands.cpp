@@ -33,7 +33,7 @@
 #include "Cosa/IOPin.hh"
 #include "Cosa/TWI.hh"
 #include "Cosa/IOStream.hh"
-#include "Cosa/IOStream/Driver/UART.hh"
+#include "Cosa/UART.hh"
 
 IOStream ios(&uart);
 
