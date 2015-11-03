@@ -70,7 +70,7 @@ public:
   bool begin(Socket* sock)
   {
     if (!Telnet::Server::begin(sock)) return (false);
-    m_shell.set_echo(false);
+    m_shell.echo(false);
     return (true);
   }
   virtual void on_connect(IOStream& ios)

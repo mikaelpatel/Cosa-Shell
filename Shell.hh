@@ -77,13 +77,13 @@ public:
    * @param[in] help_separator help separator.
    * @param[in] gap_fill character to fill between args and help.
    */
-  Shell(uint8_t cmdc, const command_t* cmdtab, const char* prompt = NULL,
-	const char* help_separator = NULL, char gap_fill = DEFAULT_GAP) :
+  Shell(uint8_t cmdc, const command_t* cmdtab, str_P prompt = NULL,
+	str_P help_separator = NULL, char gap_fill = DEFAULT_GAP) :
     m_cmdc(cmdc),
     m_cmdtab(cmdtab),
-    m_prompt((str_P) (prompt == NULL ? DEFAULT_PROMPT : prompt)),
+    m_prompt((prompt == NULL ? (str_P) DEFAULT_PROMPT : prompt)),
     m_gap_fill(gap_fill),
-    m_help_separator((str_P) (help_separator == NULL ? DEFAULT_HELP_SEPARATOR : help_separator)),
+    m_help_separator((help_separator == NULL ? (str_P) DEFAULT_HELP_SEPARATOR : help_separator)),
     m_firstrun(true),
     m_echo(true),
     m_level(ADMIN)
@@ -93,7 +93,7 @@ public:
    * Set local echo mode.
    * @param[in] mode.
    */
-  void set_echo(bool mode)
+  void echo(bool mode)
   {
     m_echo = mode;
   }
@@ -102,18 +102,18 @@ public:
    * Get local echo mode.
    * @return mode.
    */
-  bool get_echo() const
+  bool echo() const
   {
     return (m_echo);
   }
 
   /**
    * Set new prompt. Pass NULL for default prompt.
-   * @param[in] prompt string in program memory.
+   * @param[in] str string in program memory.
    */
-  void set_prompt(const char* prompt)
+  void prompt(str_P str)
   {
-    m_prompt = (str_P) (prompt == NULL ? DEFAULT_PROMPT : prompt);
+    m_prompt = (str == NULL ? (str_P) DEFAULT_PROMPT : str);
   }
 
   /**
@@ -121,7 +121,7 @@ public:
    * memory.
    * @return prompt.
    */
-  str_P get_prompt() const
+  str_P prompt() const
   {
     return (m_prompt);
   }
@@ -130,7 +130,7 @@ public:
    * Set new privilege level.
    * @param[in] level.
    */
-  void set_privilege(Level level)
+  void privilege(Level level)
   {
     m_level = level;
   }
@@ -139,7 +139,7 @@ public:
    * Get privilege level.
    * @return level.
    */
-  Level get_privilege() const
+  Level privilege() const
   {
     return (m_level);
   }
@@ -167,12 +167,11 @@ public:
    * @param[in] cmdtab command table (in program memory).
    * @param[in] prompt to be written to cout.
    */
-  void set_commands(uint8_t cmdc, const command_t* cmdtab,
-		    const char* prompt = NULL)
+  void commands(uint8_t cmdc, const command_t* cmdtab, str_P prompt = NULL)
   {
     m_cmdc = cmdc;
     m_cmdtab = cmdtab;
-    m_prompt = (str_P) (prompt == NULL ? DEFAULT_PROMPT : prompt);
+    m_prompt = (prompt == NULL ? (str_P) DEFAULT_PROMPT : prompt);
   }
 
   /**

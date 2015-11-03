@@ -142,7 +142,7 @@ void setup()
   ios.device(sock);
 
   // Set shell privilege level; ADMIN
-  shell.set_privilege(Shell::ADMIN);
+  shell.privilege(Shell::ADMIN);
 }
 
 void loop()

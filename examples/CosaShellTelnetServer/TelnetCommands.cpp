@@ -645,22 +645,22 @@ SHELL_ACTION(login, "USER", "authenticate user")
   if (argc != 2)
     return (Shell::ILLEGAL_COMMAND);
   if (strcmp_P(argv[1], PSTR("guest")) == 0)
-    shell.set_privilege(Shell::GUEST);
+    shell.privilege(Shell::GUEST);
   else {
     ios << PSTR("password: ") << flush;
     const size_t PASSWD_MAX = 32;
     char passwd[PASSWD_MAX];
     passwd[0] = 0;
     while (ios.readline(passwd, PASSWD_MAX, false) == NULL) yield();
-    if (shell.get_echo()) ios << endl;
+    if (shell.echo()) ios << endl;
     if (strcmp_P(passwd, PSTR("ciao\n")) != 0)
       return (Shell::ILLEGAL_COMMAND);
     if (strcmp_P(argv[1], PSTR("admin")) == 0)
-      shell.set_privilege(Shell::ADMIN);
+      shell.privilege(Shell::ADMIN);
     else
-      shell.set_privilege(Shell::USER);
+      shell.privilege(Shell::USER);
   }
-  shell.set_commands(membersof(command_tab), command_tab);
+  shell.commands(membersof(command_tab), command_tab);
   return (0);
 }
 
@@ -675,9 +675,9 @@ static int logout_action(int argc, char* argv[])
   UNUSED(argv);
   if (argc != 1)
     return (Shell::ILLEGAL_COMMAND);
-  shell.set_commands(membersof(init_tab), init_tab, INIT_PROMPT);
+  shell.commands(membersof(init_tab), init_tab, (str_P) INIT_PROMPT);
   return (0);
 }
 
-Shell shell(membersof(init_tab), init_tab, INIT_PROMPT);
+Shell shell(membersof(init_tab), init_tab, (str_P) INIT_PROMPT);
 
