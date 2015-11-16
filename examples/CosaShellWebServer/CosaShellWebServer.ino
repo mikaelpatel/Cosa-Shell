@@ -41,7 +41,9 @@
 #include <DNS.h>
 #include <DHCP.h>
 #include <HTTP.h>
+#include <W5X00.h>
 #include <W5100.h>
+// #include <W5200.h>
 
 #include "Cosa/RTT.hh"
 #include "Cosa/Power.hh"
